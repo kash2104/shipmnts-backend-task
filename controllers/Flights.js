@@ -36,7 +36,7 @@ exports.addFlight = async (req, res) => {
     const oldFlight = await Flight.findOne({
       shipment_number: shipment_number,
     });
-    if (oldFlight.flight_number.equals(flight_number)) {
+    if (oldFlight && oldFlight.flight_number.equals(flight_number)) {
       return res.json({
         success: true,
         message: `${shipment_number} is already in flight ${oldFlight.flight_number}`,

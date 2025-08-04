@@ -5,6 +5,8 @@ const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
 dotenv.config();
 const app = express();
+const shipmentRoutes = require("./routes/Shipments");
+const flightRoutes = require("./routes/Flights");
 
 database.connect();
 
@@ -16,6 +18,9 @@ app.use(
     credentials: true,
   })
 );
+
+app.use(shipmentRoutes);
+app.use(flightRoutes);
 
 app.get("/", (req, res) => {
   return res.json({

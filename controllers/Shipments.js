@@ -1,3 +1,4 @@
+const Flight = require("../models/Flight");
 const Shipment = require("../models/Shipment");
 
 exports.createShipment = async (req, res) => {
@@ -101,6 +102,62 @@ exports.getHops = async (req, res) => {
     return res.json({
       success: false,
       message: "error getting shipment hops",
+    });
+  }
+};
+
+exports.trackShipment = async (req, res) => {
+  try {
+    const shipment_number = req.params["shipment_number"];
+
+    const shipmentExists = await Shipment.findOne({
+      shipment_number: shipment_number,
+    });
+    if (!shipmentExists) {
+      return res.json({
+        success: false,
+        message: `Shipment with ID ${shipment_number} not found.`,
+      });
+    }
+
+    const len = shipmentExists.hops.length;
+    const totalFlights = len - 1;
+
+    let flight = Flight.findOne({ shipment_number: shipment_number });
+    console.log(flight.shipment_number);
+    if (!flight) {
+      return res.json({
+        success: false,
+        message: "no flight for this shipment",
+      });
+    }
+    // console.log(flight.shipment_number);
+    if (flight.status === "landed") {
+      return res.json({
+        success: true,
+        message: "100% delivered",
+      });
+    }
+
+    const originIndex = shipmentExists.hops.indexOf(flight.from);
+    const destinationIndex = shipmentExists.hops.indexOf(flight.to);
+    const tripCompleted = (destinationIndex / totalFlights) * 100;
+
+    return res.status(200).json({
+      success: true,
+      message: "Shipment tracking details retrieved.",
+      data: {
+        shipment_number: shipment_number,
+        currentLocation: flight.from,
+        progress_percentage: tripCompleted,
+        status: "in-transit",
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    return res.json({
+      success: false,
+      message: "error tracking shipment",
     });
   }
 };
