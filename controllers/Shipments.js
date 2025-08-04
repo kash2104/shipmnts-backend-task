@@ -59,6 +59,7 @@ exports.addHop = async (req, res) => {
     const originIndex = shipmentExists.hops.indexOf(previous_hop);
     const destinationIndex = shipmentExists.hops.indexOf(next_hop);
     shipmentExists.hops.splice(originIndex + 1, 0, new_hop);
+    await shipmentExists.save();
 
     return res.status(200).json({
       success: true,
