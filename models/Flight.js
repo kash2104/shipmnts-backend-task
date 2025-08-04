@@ -24,6 +24,9 @@ const flightSchema = new mongoose.Schema({
     type: String,
     default: "in-transit",
   },
+  shipment_number: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("Flight", flightSchema);

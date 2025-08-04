@@ -41,6 +41,7 @@ exports.addFlight = async (req, res) => {
       departure: departure,
       arrival: arrival,
       status: "in-transit",
+      shipment_number: shipment_number,
     });
 
     return res.status(201).json({
