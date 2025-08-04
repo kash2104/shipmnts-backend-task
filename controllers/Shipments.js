@@ -74,3 +74,33 @@ exports.addHop = async (req, res) => {
     });
   }
 };
+
+exports.getHops = async (req, res) => {
+  try {
+    const shipment_number = req.params["shipment_number"];
+    const shipmentExists = await Shipment.findOne({
+      shipment_number: shipment_number,
+    });
+    if (!shipmentExists) {
+      return res.json({
+        success: false,
+        message: `Shipment with ID ${shipment_number} not found.`,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Hops retrieved successfully.",
+      data: {
+        shipment_number: shipment_number,
+        hops: shipmentExists.hops,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    return res.json({
+      success: false,
+      message: "error getting shipment hops",
+    });
+  }
+};
