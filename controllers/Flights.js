@@ -56,3 +56,36 @@ exports.addFlight = async (req, res) => {
     });
   }
 };
+
+exports.updateFlight = async (req, res) => {
+  try {
+    const flight_number = req.params["flight_number"];
+
+    const flightExists = await Flight.findOne({ flight_number: flight_number });
+    if (!flightExists) {
+      return res.json({
+        success: false,
+        message: `flight with ${flight_number} not found`,
+      });
+    }
+
+    const { status } = req.body;
+    flightExists.status = status;
+    await flightExists.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "flight status update successfully",
+      data: {
+        flight_number: flight_number,
+        status: flightExists.status,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "error while updating flight",
+    });
+  }
+};
